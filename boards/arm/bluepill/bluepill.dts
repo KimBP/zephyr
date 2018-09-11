@@ -8,8 +8,8 @@
 #include <st/stm32f103Xb.dtsi>
 
 / {
-	model = "STMicroelectronics STM32F103RB-NUCLEO board";
-	compatible = "st,stm32f103rb-nucleo", "st,stm32f103rb";
+	model = "STMicroelectronics STM32F103 bluepill board";
+	compatible = "st,bluepill", "st,stm32f103rb";
 
 	chosen {
 		zephyr,console = &usart2;
@@ -19,8 +19,8 @@
 
 	leds {
 		compatible = "gpio-leds";
-		green_led_2: led@0 {
-			gpios = <&gpioa 5 GPIO_INT_ACTIVE_HIGH>;
+		blue_led: led@0 {
+			gpios = <&gpioc 13 GPIO_INT_ACTIVE_LOW>;
 			label = "User LD2";
 		};
 	};
@@ -29,12 +29,12 @@
 		compatible = "gpio-keys";
 		user_button: button@0 {
 			label = "User";
-			gpios = <&gpioc 13 GPIO_INT_ACTIVE_LOW>;
+			gpios = <&gpiob 11 GPIO_INT_ACTIVE_LOW>;
 		};
 	};
 
 	aliases {
-		led0 = &green_led_2;
+		led0 = &blue_led;
 		sw0 = &user_button;
 	};
 };
