@@ -30,6 +30,10 @@ LOG_MODULE_REGISTER(sample, LOG_LEVEL_INF);
 #define DISPLAY_DEV_NAME DT_LABEL(DT_INST(0, sitronix_st7789v))
 #endif
 
+#if DT_NODE_HAS_STATUS(DT_INST(0, sitronix_st7735r), okay)
+#define DISPLAY_DEV_NAME DT_LABEL(DT_INST(0, sitronix_st7735r))
+#endif
+
 #if DT_NODE_HAS_STATUS(DT_INST(0, fsl_imx6sx_lcdif), okay)
 #define DISPLAY_DEV_NAME DT_LABEL(DT_INST(0, fsl_imx6sx_lcdif))
 #endif
