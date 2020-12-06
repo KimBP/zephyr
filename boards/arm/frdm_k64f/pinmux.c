@@ -155,6 +155,13 @@ static int frdm_k64f_pinmux_init(const struct device *dev)
 		       PORT_PCR_PE_MASK | PORT_PCR_PS_MASK);
 #endif
 
+
+#if CONFIG_SHIELD_ST7735R_ADA_160x128
+	/* Reset and Data/Command */
+	pinmux_pin_set(portc,  12, PORT_PCR_MUX(kPORT_MuxAsGpio));
+	pinmux_pin_set(portc,  4, PORT_PCR_MUX(kPORT_MuxAsGpio));
+#endif
+
 #if CONFIG_SHIELD_ADAFRUIT_WINC1500
 	/* IRQ, ENable, RST */
 	pinmux_pin_set(portc,  3, PORT_PCR_MUX(kPORT_MuxAsGpio));
