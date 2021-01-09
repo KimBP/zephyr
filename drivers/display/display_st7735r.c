@@ -108,14 +108,17 @@ static int st7735r_exit_sleep(struct st7735r_data *data)
 	int ret;
 
 	ret = st7735r_transmit(data, ST7735R_CMD_SLEEP_OUT, NULL, 0);
+	if (ret < 0) {
+		return ret;
+	}
 	k_sleep(ST7735R_EXIT_SLEEP_TIME);
 
-	return ret;
+	return 0;
 }
 
 static int st7735r_reset_display(struct st7735r_data *data)
 {
-	int ret = 0;
+	int ret;
 
 	LOG_DBG("Resetting display");
 	if (data->config->reset.name) {
@@ -124,23 +127,26 @@ static int st7735r_reset_display(struct st7735r_data *data)
 		gpio_pin_set(data->reset_dev, data->config->reset.pin, 0);
 	} else {
 		ret = st7735r_transmit(data, ST7735R_CMD_SW_RESET, NULL, 0);
+		if (ret < 0) {
+			return ret;
+		}
 	}
 	k_sleep(ST7735R_EXIT_SLEEP_TIME);
-	return ret;
+	return 0;
 }
 
 static int st7735r_blanking_on(const struct device *dev)
 {
-	struct st7735r_data *driver = (struct st7735r_data *)dev->data;
+	struct st7735r_data *data = (struct st7735r_data *)dev->data;
 
-	return st7735r_transmit(driver, ST7735R_CMD_DISP_OFF, NULL, 0);
+	return st7735r_transmit(data, ST7735R_CMD_DISP_OFF, NULL, 0);
 }
 
 static int st7735r_blanking_off(const struct device *dev)
 {
-	struct st7735r_data *driver = (struct st7735r_data *)dev->data;
+	struct st7735r_data *data = (struct st7735r_data *)dev->data;
 
-	return st7735r_transmit(driver, ST7735R_CMD_DISP_ON, NULL, 0);
+	return st7735r_transmit(data, ST7735R_CMD_DISP_ON, NULL, 0);
 }
 
 static int st7735r_read(const struct device *dev,
