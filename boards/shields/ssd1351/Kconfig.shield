@@ -1,0 +1,5 @@
+# Copyright (c) 2019 Linaro Limited
+# SPDX-License-Identifier: Apache-2.0
+
+config SHIELD_SSD1351_128X128
+	def_bool $(shields_list_contains,ssd1351_128x128)
