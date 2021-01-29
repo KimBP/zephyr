@@ -42,6 +42,9 @@ Current supported displays
 | Waveshare 240x240    | st7789v_waveshare_240x240    |
 | 1.3inch IPS LCD      |                              |
 +----------------------+------------------------------+
+| Midas 240x320        | st7789v_midas_240x320        |
+| 1.77" IPS LCD        |                              |
++----------------------+------------------------------+
 
 Requirements
 ************
