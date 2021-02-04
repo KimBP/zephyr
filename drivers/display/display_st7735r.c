@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) 2017 Jan Van Winkel <jan.van_winkel@dxplore.eu>
+ * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019 Marc Reilly
+ * Copyright (c) 2019 PHYTEC Messtechnik GmbH
+ * Copyright (c) 2020 Endian Technologies AB
  * Copyright (c) 2020 Kim Bøndergaard <kim@fam-boendergaard.dk>
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -91,6 +96,7 @@ static int st7735r_transmit(struct st7735r_data *data, uint8_t cmd,
 	if (ret < 0) {
 		return ret;
 	}
+
 	if (tx_data != NULL) {
 		tx_buf.buf = (void *)tx_data;
 		tx_buf.len = tx_count;
@@ -100,6 +106,7 @@ static int st7735r_transmit(struct st7735r_data *data, uint8_t cmd,
 			return ret;
 		}
 	}
+
 	return 0;
 }
 
@@ -111,6 +118,7 @@ static int st7735r_exit_sleep(struct st7735r_data *data)
 	if (ret < 0) {
 		return ret;
 	}
+
 	k_sleep(ST7735R_EXIT_SLEEP_TIME);
 
 	return 0;
@@ -131,7 +139,9 @@ static int st7735r_reset_display(struct st7735r_data *data)
 			return ret;
 		}
 	}
+
 	k_sleep(ST7735R_EXIT_SLEEP_TIME);
+
 	return 0;
 }
 
@@ -175,6 +185,7 @@ static int st7735r_set_mem_area(struct st7735r_data *data,
 	if (ret < 0) {
 		return ret;
 	}
+
 	spi_data[0] = sys_cpu_to_be16(ram_y);
 	spi_data[1] = sys_cpu_to_be16(ram_y + h - 1);
 	ret = st7735r_transmit(data, ST7735R_CMD_RASET, (uint8_t *)&spi_data[0], 4);
@@ -237,6 +248,7 @@ static int st7735r_write(const struct device *dev,
 		if (ret < 0) {
 			return ret;
 		}
+
 		write_data_start += (desc->pitch * ST7735R_PIXEL_SIZE);
 	}
 
@@ -275,6 +287,7 @@ static void st7735r_get_capabilities(const struct device *dev,
 		capabilities->supported_pixel_formats = PIXEL_FORMAT_RGB_565;
 		capabilities->current_pixel_format = PIXEL_FORMAT_RGB_565;
 	}
+
 	capabilities->current_orientation = DISPLAY_ORIENTATION_NORMAL;
 }
 
@@ -287,12 +300,14 @@ static int st7735r_set_pixel_format(const struct device *dev,
 	    (~config->madctl & ST7735R_MADCTL_BGR)) {
 		return 0;
 	}
+
 	if ((pixel_format == PIXEL_FORMAT_BGR_565) &&
 	    (config->madctl & ST7735R_MADCTL_BGR)) {
 		return 0;
 	}
 
 	LOG_ERR("Pixel format change not implemented");
+
 	return -ENOTSUP;
 }
 
@@ -302,7 +317,9 @@ static int st7735r_set_orientation(const struct device *dev,
 	if (orientation == DISPLAY_ORIENTATION_NORMAL) {
 		return 0;
 	}
+
 	LOG_ERR("Changing display orientation not implemented");
+
 	return -ENOTSUP;
 }
 
@@ -467,6 +484,7 @@ static int st7735r_init(const struct device *dev)
 		LOG_ERR("Could not get GPIO port for cmd/DATA port");
 		return -ENODEV;
 	}
+
 	ret = gpio_pin_configure(data->cmd_data_dev, config->cmd_data.pin,
 				 GPIO_OUTPUT | config->cmd_data.flags);
 	if (ret) {
@@ -522,10 +540,14 @@ static int st7735r_pm_control(const struct device *dev, uint32_t ctrl_command,
 			}
 			data->pm_state = DEVICE_PM_LOW_POWER_STATE;
 		}
+
 		break;
+
 	case DEVICE_PM_GET_POWER_STATE:
 		*((uint32_t *)context) = data->pm_state;
+
 		break;
+
 	default:
 		ret = -EINVAL;
 	}
@@ -533,6 +555,7 @@ static int st7735r_pm_control(const struct device *dev, uint32_t ctrl_command,
 	if (cb != NULL) {
 		cb(dev, ret, context, arg);
 	}
+
 	return ret;
 }
 #endif /* CONFIG_DEVICE_POWER_MANAGEMENT */
