@@ -241,7 +241,7 @@ zephyr_udc0: &usbotg {
 		     &RMII0_MDC_PTB1>;
 	pinctrl-names = "default";
 	ptp {
-		status = "okay";
+		status = "disabled";
 		pinctrl-0 = <&ENET0_1588_TMR0_PTC16 &ENET0_1588_TMR1_PTC17
 			     &ENET0_1588_TMR2_PTC18>;
 		pinctrl-names = "default";
