@@ -48,6 +48,12 @@ config SOC_ENABLE_APPCPU
 	help
 	  This hidden configuration lets PROCPU core to map and start APPCPU whenever IPM is enabled.
 
+config SPIRAM_SPEED
+	int
+	default 120 if SPIRAM_SPEED_120M
+	default 80 if SPIRAM_SPEED_80M
+	default 40 if SPIRAM_SPEED_40M
+
 choice ESP32S3_RTC_CLK_SRC
 	prompt "RTC clock source"
 	default ESP32_RTC_CLK_SRC_INT_RC
