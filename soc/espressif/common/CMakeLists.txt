@@ -3,4 +3,6 @@
 
 if(CONFIG_SOC_SERIES_ESP32 OR CONFIG_SOC_SERIES_ESP32S2 OR CONFIG_SOC_SERIES_ESP32S3)
   zephyr_include_directories(include)
+
+  zephyr_sources(loader.c)
 endif()

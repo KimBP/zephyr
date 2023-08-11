@@ -3,7 +3,6 @@
 zephyr_sources(
   soc.c
   soc_cache.c
-  loader.c
   )
 
 zephyr_include_directories(.)
