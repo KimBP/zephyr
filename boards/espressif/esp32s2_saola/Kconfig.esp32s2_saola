@@ -3,3 +3,7 @@
 
 config BOARD_ESP32S2_SAOLA
 	select SOC_ESP32S2_WROVER_N4R2
+
+zephyr_sources(
+  loader.c
+  )
