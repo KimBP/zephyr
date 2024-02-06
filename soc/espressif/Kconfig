@@ -4,5 +4,7 @@
 if SOC_FAMILY_ESPRESSIF_ESP32
 
 rsource "*/Kconfig"
+source "common/Kconfig.esptool"
+source "common/Kconfig.spiram"
 
 endif # SOC_FAMILY_ESPRESSIF_ESP32
