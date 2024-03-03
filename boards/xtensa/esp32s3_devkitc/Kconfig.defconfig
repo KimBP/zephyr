@@ -1,0 +1,37 @@
+# ESP32S3 DevKitC board configuration
+
+# Copyright (c) 2024 Kim Bøndergaard <kim@fam-boendergaard.dk>
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_ESP32S3_DEVKITC
+
+config BOARD
+	default "esp32s3_devkitc"
+
+config HEAP_MEM_POOL_ADD_SIZE_BOARD
+	int
+	default 65535 if WIFI && BT
+	default 51200 if WIFI
+	default 40960 if BT
+	default 4096
+
+choice BT_HCI_BUS_TYPE
+	default BT_ESP32 if BT
+endchoice
+
+endif
+
+if BOARD_ESP32S3_DEVKITC_APPCPU
+
+config BOARD
+	default "esp32s3_devkitc_appcpu"
+
+config HEAP_MEM_POOL_ADD_SIZE_BOARD
+	def_int 4096
+
+config KERNEL_BIN_NAME
+	default "esp32_appcpu_firmware"
+endif
+
+config ENTROPY_GENERATOR
+	default y
