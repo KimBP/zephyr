@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Espressif Systems (Shanghai) Co., Ltd.
 # SPDX-License-Identifier: Apache-2.0
 
-if SOC_FAMILY_ESP32
+if SOC_FAMILY_ESPRESSIF_ESP32
 
 config ESP_SPIRAM
 	bool "Support for external, SPI-connected RAM"
@@ -122,6 +122,10 @@ config SPIRAM_SPEED
 	default 80 if SPIRAM_SPEED_80M
 	default 40 if SPIRAM_SPEED_40M || SPIRAM_SPEED_20M || SPIRAM_SPEED_26M
 
+config SPIRAM
+	bool
+	default y if ESP_SPIRAM
+
 if SOC_SERIES_ESP32
 
 menu "PSRAM clock and cs IO for ESP32-DOWD"
@@ -212,4 +216,4 @@ endif # SOC_SERIES_ESP32
 
 endmenu # ESP_SPIRAM
 
-endif # SOC_FAMILY_ESP32
+endif # SOC_FAMILY_ESPRESSIF_ESP32

@@ -1,4 +1,4 @@
-if SOC_FAMILY_ESP32
+if SOC_FAMILY_ESPRESSIF_ESP32
 
 config ESPTOOLPY_OCT_FLASH
 	bool "Use Octal Flash"
@@ -212,4 +212,4 @@ config ESPTOOLPY_AFTER
 	default "hard_reset" if ESPTOOLPY_AFTER_RESET
 	default "no_reset" if ESPTOOLPY_AFTER_NORESET
 
-endif # SOC_FAMILY_ESP32
+endif # SOC_FAMILY_ESPRESSIF_ESP32

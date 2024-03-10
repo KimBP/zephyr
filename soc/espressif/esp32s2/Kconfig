@@ -23,44 +23,6 @@ config SOC_TOOLCHAIN_NAME
 	string
 	default "espressif_esp32s2"
 
-choice SOC_PART_NUMBER
-	prompt "ESP32-S2 SOC Selection"
-	depends on SOC_SERIES_ESP32S2
-
-	# SoC with/without embedded flash
-	config SOC_ESP32S2
-		bool "ESP32S2"
-	config SOC_ESP32S2_R2
-		bool "ESP32S2_R2"
-	config SOC_ESP32S2_FH2
-		bool "ESP32S2_FH2"
-	config SOC_ESP32S2_FH4
-		bool "ESP32S2_FH4"
-	config SOC_ESP32S2_FN4R2
-		bool "ESP32S2_FN4R2"
-	# SiP with external flash / psram
-	config SOC_ESP32S2_SOLO_N4
-		bool "ESP32S2_SOLO_N4"
-	config SOC_ESP32S2_SOLO_N8
-		bool "ESP32S2_SOLO_N8"
-	config SOC_ESP32S2_SOLO_N16
-		bool "ESP32S2_SOLO_N16"
-	config SOC_ESP32S2_SOLO_N4R2
-		bool "ESP32S2_SOLO_N4R2"
-	config SOC_ESP32S2_MINI_N4
-		bool "ESP32S2_MINI_N4"
-	config SOC_ESP32S2_MINI_N4R2
-		bool "ESP32S2_MINI_N4R2"
-	config SOC_ESP32S2_WROOM
-		bool "ESP32S2_WROOM"
-	config SOC_ESP32S2_WROVER_N4R2
-		bool "ESP32S2_WROVER_N4R2"
-	config SOC_ESP32S2_WROVER_N8R2
-		bool "ESP32S2_WROVER_N8R2"
-	config SOC_ESP32S2_WROVER_N16R2
-		bool "ESP32S2_WROVER_N16R2"
-
-endchoice # SOC_PART_NUMBER
 
 config ESP_SYSTEM_RTC_EXT_XTAL
 	bool
