@@ -67,6 +67,9 @@ ret:
 	return err;
 }
 
+uint8_t libappvar;
+uint8_t libapparr[256];
+
 int main(void)
 {
 	int err = test_heap_caps(10001);
@@ -83,5 +86,30 @@ int main(void)
 	} else {
 		printk("Internal mem test pass\n");
 	}
+
+	bool test_res = true;
+	uint8_t count = 0;
+	for (unsigned i = 0; i < 256; i++) {
+		libappvar = count;
+		libapparr[i] = (uint8_t)~count;
+		if (libappvar != count) {
+			printk("libappvar == %u - expected %u\n", libappvar, count);
+			test_res = false;
+		}
+		++count;
+	}
+	printk("libappvar test result %s\n", (test_res ? "ok" : "not ok"));
+
+	test_res = true;
+	count = 0;
+	for (unsigned i = 0; i < 256; i++) {
+		if (libapparr[i] !=  (uint8_t)~count) {
+			printk("libapparr[%u] == %u - expected %u\n", i, libapparr[i], (uint8_t)~count);
+			test_res = false;
+		}
+		++count;
+	}
+	printk("libappvar test result %s\n", (test_res ? "ok" : "not ok"));
+
 	return 0;
 }
