@@ -91,6 +91,7 @@ MEMORY
    * A dummy section is used to avoid overlap. See `.ext_ram.dummy` in `sections.ld.in`
    */
 #if defined(CONFIG_ESP_SPIRAM)
+
   ext_ram_seg(RWX): org = 0x3C000040, len = CONFIG_ESP_SPIRAM_SIZE - 0x40
 #endif
 
@@ -409,6 +410,14 @@ SECTIONS
 
   } GROUP_DATA_LINK_IN(IRAM_REGION, ROMABLE_REGION)
 
+#if defined(CONFIG_ESP_SPIRAM)
+  .ext_ram.dummy (NOLOAD):
+  {
+    . = ORIGIN(ext_ram_seg) + (_rodata_reserved_end - _flash_rodata_dummy_start);
+    . = ALIGN (0x10000);
+  } GROUP_LINK_IN(ext_ram_seg)
+#endif /* CONFIG_ESP_SPIRAM */
+
   /**
    * This section is required to skip .iram0.text area because iram0_0_seg and
    * dram0_0_seg reflect the same address space on different buses.
@@ -550,7 +559,7 @@ SECTIONS
     . = ALIGN(4);
   } GROUP_DATA_LINK_IN(RAMABLE_REGION, ROMABLE_REGION)
 
-  #include <zephyr/linker/cplusplus-rom.ld>
+/*  #include <zephyr/linker/cplusplus-rom.ld>*/
   #include <snippets-data-sections.ld>
   #include <zephyr/linker/common-ram.ld>
   #include <snippets-ram-sections.ld>
@@ -751,19 +760,20 @@ SECTIONS
    * and `drom0_0_seg` are on the same bus
    */
 #if defined(CONFIG_ESP_SPIRAM)
-
+#if defined(CONFIG_ESP_SPIRAM_NO)
   .ext_ram.dummy (NOLOAD):
   {
     . = ORIGIN(ext_ram_seg) + (_rodata_reserved_end - _flash_rodata_dummy_start);
     . = ALIGN (0x10000);
   } GROUP_LINK_IN(ext_ram_seg)
+#endif /* CONFIG_ESP_SPIRAM */
 
   /* This section holds .ext_ram.bss data, and will be put in PSRAM */
   .ext_ram.bss (NOLOAD) :
   {
     _ext_ram_bss_start = ABSOLUTE(.);
     *(.ext_ram.bss*)
-    . = ALIGN(4);
+    . = ALIGN(8);
 
     _spiram_heap_start = ABSOLUTE(.);
     . = . + CONFIG_ESP_SPIRAM_HEAP_SIZE - (_spiram_heap_start - _ext_ram_bss_start);
