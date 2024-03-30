@@ -416,6 +416,27 @@ SECTIONS
     . = ORIGIN(ext_ram_seg) + (_rodata_reserved_end - _flash_rodata_dummy_start);
     . = ALIGN (0x10000);
   } GROUP_LINK_IN(ext_ram_seg)
+
+
+  /* This section holds .ext_ram.bss data, and will be put in PSRAM */
+  .ext_ram.bss (NOLOAD) :
+  {
+    _ext_ram_bss_start = ABSOLUTE(.);
+    *(.ext_ram.bss*)
+    *libapp.a:(.bss .bss.*)
+    *libmodules__lvgl.a:(.bss .bss.*)
+
+
+    . = ALIGN(8);
+
+    _spiram_heap_start = ABSOLUTE(.);
+    . = . + CONFIG_ESP_SPIRAM_HEAP_SIZE /*- (_spiram_heap_start - _ext_ram_bss_start)*/;
+    . = ALIGN(4);
+
+    _ext_ram_bss_end = ABSOLUTE(.);
+  } GROUP_LINK_IN(ext_ram_seg)
+
+
 #endif /* CONFIG_ESP_SPIRAM */
 
   /**
@@ -759,30 +780,6 @@ SECTIONS
    * This section is required to skip flash rodata sections, because `ext_ram_seg`
    * and `drom0_0_seg` are on the same bus
    */
-#if defined(CONFIG_ESP_SPIRAM)
-#if defined(CONFIG_ESP_SPIRAM_NO)
-  .ext_ram.dummy (NOLOAD):
-  {
-    . = ORIGIN(ext_ram_seg) + (_rodata_reserved_end - _flash_rodata_dummy_start);
-    . = ALIGN (0x10000);
-  } GROUP_LINK_IN(ext_ram_seg)
-#endif /* CONFIG_ESP_SPIRAM */
-
-  /* This section holds .ext_ram.bss data, and will be put in PSRAM */
-  .ext_ram.bss (NOLOAD) :
-  {
-    _ext_ram_bss_start = ABSOLUTE(.);
-    *(.ext_ram.bss*)
-    . = ALIGN(8);
-
-    _spiram_heap_start = ABSOLUTE(.);
-    . = . + CONFIG_ESP_SPIRAM_HEAP_SIZE - (_spiram_heap_start - _ext_ram_bss_start);
-    . = ALIGN(4);
-
-    _ext_ram_bss_end = ABSOLUTE(.);
-  } GROUP_LINK_IN(ext_ram_seg)
-
-#endif /* CONFIG_ESP_SPIRAM */
 
   /* Marks the end of IRAM code segment */
   .iram0.text_end (NOLOAD) :
