@@ -33,9 +33,9 @@
 		ili9488_open_smart_3_8_tft_touch_arduino: ili9488 {
 			compatible = "ilitek,ili9488-intel8080";
 			pixel-format = <ILI9XXX_PIXEL_FORMAT_RGB888>;
-			width = <320>;
-			height = <480>;
-			rotation = <0>;
+			width = <480>;
+			height = <320>;
+			rotation = <90>;
 			frmctr1 = [a0 11];
 			pwctrl1 = [17 15];
 			pwctrl2 = [41];
