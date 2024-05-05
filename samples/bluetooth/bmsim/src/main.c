@@ -25,7 +25,7 @@
 
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 /* BMS UUIDs*/
 static const struct bt_uuid_16 bmsUuid = BT_UUID_INIT_16(0xFF00);
@@ -82,6 +82,7 @@ static bool notifyEnable;
 static void bmsCccCfgChanged(const struct bt_gatt_attr *attr, uint16_t value)
 {
 	notifyEnable = (value == BT_GATT_CCC_NOTIFY);
+	LOG_DBG("value == %d", value);
 	LOG_INF("Notification %s", notifyEnable ? "enabled" : "disabled");
 }
 
@@ -125,8 +126,6 @@ static ssize_t writeWithoutRspBms(struct bt_conn *conn,
 		return 0;
 	}
 
-	dataRequested = true;
-
 	if (bufPtr[1] == 0xa5) {
 		LOG_INF("Read msg: %u", bufPtr[2]);
 	} else {
@@ -137,6 +136,8 @@ static ssize_t writeWithoutRspBms(struct bt_conn *conn,
 	value[offset + len] = 0;
 
 	bmsSettingBufLen = offset + len;
+
+	dataRequested = true;
 
 	return len;
 }
@@ -224,22 +225,10 @@ static void bt_ready(void)
 
 static void notifyData(struct bt_gatt_attr* notifyAttr)
 {
-	static int count = 4;
-
-	static bool doSend = false;
-
-	count++;
-	if (count == 5) {
-		count = 0;
-		doSend = true;
-	}
-	if (bmsDataOffset) {
-		doSend = true;
-	}
-
+	bool doSend = true;
 
 	LOG_DBG("NotifyData: bmsDataOffset: %u", bmsDataOffset);
-	if (doSend)
+	while (doSend)
 	{
 		uint16_t len = bmsDataBufLen - bmsDataOffset;
 		if (len > mtuTx) {
@@ -256,6 +245,7 @@ static void notifyData(struct bt_gatt_attr* notifyAttr)
 				// All sent
 				bmsDataOffset = 0;
 				notifySent = true;
+				doSend = false;
 			}
 		}
 	}
@@ -502,27 +492,12 @@ int main(void)
 	while (1) {
 		k_sleep(K_MSEC(100));
 
-		if (notifyEnable ) {
-			static uint8_t msgId;
-			if (dataRequested) {
-				msgId = bmsSettingBuf[2];
-				dataRequested = false;
-			} else {
-				if (notifySent) {
-
-					static uint8_t idx = 0;
-					const uint8_t msgArray[] = {3,4,5,0xA0, 0x2e, 0xA1, 0xAA};
-
-					msgId = msgArray[idx];
-					idx++;
-					if (idx == sizeof(msgArray)) {
-						idx = 0;
-					}
-				}
-//				bmsSimulate(msgId);
-			}
-
+		uint8_t msgId;
+		if (dataRequested) {
+			msgId = bmsSettingBuf[2];
+			dataRequested = false;
 			bmsSimulate(msgId);
+			LOG_INF("Msg requested: %u", msgId);
 
 			notifyData(bmsNotifyAttr);
 		}
