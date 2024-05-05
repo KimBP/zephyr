@@ -13,6 +13,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/kernel.h>
+#include <zephyr/random/random.h>
 
 #include <zephyr/settings/settings.h>
 
@@ -308,20 +309,32 @@ uint8_t finishMessage(char* buf)
 	return writeTail(buf);
 }
 
+
+static int16_t random(int16_t min, int16_t max)
+{
+	uint32_t span = max - min + 1;
+
+	uint32_t rand = sys_rand32_get();
+	rand %= span;
+
+	return min + rand;
+}
+
+
 static void bmsSimulate(uint8_t msgId)
 {
 	static struct BmsData4 {
 		uint16_t cellVoltage[4]; // Unit 1mV: 3332 -> 3.332V
-	} bmsData4;
+	} bmsData4 = { .cellVoltage = { 3332, 3332, 3332, 3332 } };
 
-	bmsData4.cellVoltage[0] = 3332;
-	bmsData4.cellVoltage[1] = 3331;
-	bmsData4.cellVoltage[2] = 3320;
-	bmsData4.cellVoltage[3] = 3328;
+	bmsData4.cellVoltage[0] += random(-2,2);
+	bmsData4.cellVoltage[1] += random(-2,2);
+	bmsData4.cellVoltage[2] += random(-2,2);
+	bmsData4.cellVoltage[3] += random(-6,6);
 
 	static struct BmsData3 {
 		uint16_t volt;	// Unit 10mV: 1332 -> 13,32V
-		uint16_t amp; // Unit 10mA: 7550 -> 75.5A
+		int16_t amp; // Unit 10mA: 7550 -> 75.5A
 		uint16_t capRemaining; // Unit 10mAh: 7550 -> 75.5Ah
 		uint16_t capNominal; // Unit 10mAh: 7550 -> 75.5Ah
 		uint16_t cycles;
@@ -336,26 +349,32 @@ static void bmsSimulate(uint8_t msgId)
 		uint8_t cells; // Number of battery strings (cells?)
 		uint8_t tempCnt; // = 3 here
 		uint16_t temp[3]; // Unit 0.1 Degrees Kelvin (aka Celcius + 273.1)
-	} bmsData3;
+	} bmsData3 = {
+		.volt = 0,
+		.amp = 0,
+		.capRemaining = 9800,
+		.capNominal = 10000,
+		.cycles = 14,
+		.prodDate = 0x2068,
+		.balance = {0, 0 },
+		.protectionStatus = 0,
+		.swVersion = 0x20,
+		.capacityPercent = 98,
+		.mosFet = 0x3,
+		.cells = 4,
+		.tempCnt = 3,
+		.temp = {2731 + 100, 2731 + 150, 2731 + 200},
+	};
 
 	bmsData3.volt = (bmsData4.cellVoltage[0] + bmsData4.cellVoltage[1] +
 		            bmsData4.cellVoltage[2] + bmsData4.cellVoltage[3]) / 10;
-	bmsData3.amp = 345;
-	bmsData3.capRemaining = 9812;
-	bmsData3.capNominal = 10000;
-	bmsData3.cycles = 14;
-	bmsData3.prodDate = 0x2068;
-	bmsData3.balance[0] = 0;
-	bmsData3.balance[1] = 0;
-	bmsData3.protectionStatus = 0x0; // ?
-	bmsData3.swVersion = 0x20;
-	bmsData3.capacityPercent = 98;
-	bmsData3.mosFet = 0x3;
-	bmsData3.cells = 4; // ?
-	bmsData3.tempCnt = 3;
-	bmsData3.temp[0] = 2731 + 291;
-	bmsData3.temp[1] = 2731 + 295;
-	bmsData3.temp[2] = 2731 - 72;
+	bmsData3.amp += random(-100, 100);
+	bmsData3.capRemaining += random(-100,100);
+	bmsData3.cycles = 14 + random(0,99)/99;
+	bmsData3.capacityPercent = bmsData3.capRemaining / 100;
+	bmsData3.temp[0] += random(-10, +10);
+	bmsData3.temp[1] += random(-10, +10);
+	bmsData3.temp[2] += random(-10, +10);
 
 	if (notifySent) {
 		notifySent=false;
