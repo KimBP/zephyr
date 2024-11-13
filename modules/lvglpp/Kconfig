@@ -1,0 +1,13 @@
+# Copyright (c) 2024 Kim Bøndergaard <kim@fam-boendergaard.dk>
+# SPDX-License-Identifier: Apache-2.0
+
+config ZEPHYR_LVGLPP_MODULE
+        bool
+
+config LVGLPP
+        bool "LVGL CPP Support - based on lvglpp"
+	select LVGL
+        help
+          This option enables the LVGL Plus Plus library
+
+
