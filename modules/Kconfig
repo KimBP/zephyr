@@ -28,6 +28,8 @@ source "modules/Kconfig.esp32"
 source "modules/Kconfig.infineon"
 source "modules/Kconfig.libmetal"
 source "modules/lvgl/Kconfig"
+source "modules/lvglpp/Kconfig"
+source "modules/Kconfig.mcux"
 source "modules/Kconfig.microchip"
 source "modules/Kconfig.mspm0"
 source "modules/Kconfig.nuvoton"
@@ -111,6 +113,9 @@ comment "Segger module not available."
 
 comment "LVGL module not available."
 	depends on !ZEPHYR_LVGL_MODULE
+
+comment "LVGLPP module not available."
+	depends on !ZEPHYR_LVGLPP_MODULE
 
 comment "cmsis module not available."
 	depends on !ZEPHYR_CMSIS_MODULE
