@@ -1,0 +1,14 @@
+# Copyright (c) 2025 Kim Bøndergaard <kim@fam-boendergaard.dk>
+# SPDX-License-Identifier: Apache-2.0
+
+config ZEPHYR_NMEA2000_MODULE
+        bool
+
+config NMEA2000
+        bool "Support for NMEA2000 from timo.lappalainen@kave.fi"
+	depends on CPP
+	depends on CAN
+        help
+          This option enables the NMEA2000 library
+
+
