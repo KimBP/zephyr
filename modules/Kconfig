@@ -33,6 +33,7 @@ source "modules/lvgl/Kconfig"
 source "modules/lvglpp/Kconfig"
 source "modules/Kconfig.mcux"
 source "modules/Kconfig.microchip"
+source "modules/NMEA2000/Kconfig"
 source "modules/Kconfig.nuvoton"
 source "modules/Kconfig.open-amp"
 source "modules/Kconfig.picolibc"
@@ -90,6 +91,9 @@ comment "Trusted-firmware-a module not available."
 
 comment "Nanopb module not available."
 	depends on !ZEPHYR_NANOPB_MODULE
+
+comment "NMEA2000 module not available."
+	depends on !ZEPHYR_NMEA2000_MODULE
 
 comment "Lz4 module not available."
 	depends on !ZEPHYR_LZ4_MODULE
