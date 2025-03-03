@@ -32,6 +32,7 @@ source "modules/lvglpp/Kconfig"
 source "modules/Kconfig.mcux"
 source "modules/Kconfig.microchip"
 source "modules/Kconfig.mspm0"
+source "modules/NMEA2000/Kconfig"
 source "modules/Kconfig.nuvoton"
 source "modules/Kconfig.open-amp"
 source "modules/Kconfig.rpmsg-lite"
@@ -95,6 +96,9 @@ comment "Trusted-firmware-a module not available."
 
 comment "Nanopb module not available."
 	depends on !ZEPHYR_NANOPB_MODULE
+
+comment "NMEA2000 module not available."
+	depends on !ZEPHYR_NMEA2000_MODULE
 
 comment "loramac-node module not available."
 	depends on !ZEPHYR_LORAMAC_NODE_MODULE
