@@ -41,7 +41,7 @@ bool tNMEA2000_zephyr::canSend()
 
   int err;
   do {
-    err = can_send(dev, frame, K_NO_WAIT, sendCbHandler, this);
+    err = can_send(dev, frame, K_MSEC(2), sendCbHandler, this);
   } while (err == -EAGAIN);
 
   idleQueue.enqueue(frame);
@@ -132,7 +132,7 @@ void tNMEA2000_zephyr::runner()
     }
 
     ParseMessages(); // This processes incoming messages
-    k_sleep(K_MSEC(40));       
+    k_sleep(K_MSEC(10));
   }
 }
 
