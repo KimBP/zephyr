@@ -8,7 +8,6 @@
 #include <NMEA2000.h>
 
 #include <Queue/SafeQueue.h>
-#include <Queue/IsrQueue.h>
 
 #include <cpputil/semaphore.h>
 #include <cpputil/mutex.h>
