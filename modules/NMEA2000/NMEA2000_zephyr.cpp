@@ -82,6 +82,9 @@ tNMEA2000_zephyr::tNMEA2000_zephyr()
 : th(cpputil::thread(std::bind(&tNMEA2000_zephyr::runner, this)))
 , dev(DEVICE_DT_GET(DT_CHOSEN(zephyr_canbus)))
 {
+
+  th.setName("NMEA2000 wrapper");
+
   if (!device_is_ready(dev)) {
     printk("CAN device not ready");
     return;
