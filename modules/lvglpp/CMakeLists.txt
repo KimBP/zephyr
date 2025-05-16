@@ -10,9 +10,11 @@ set(LVGLPP_DIR ${ZEPHYR_LVGLPP_MODULE_DIR})
 zephyr_interface_library_named(LVGLPP)
 zephyr_library()
 zephyr_include_directories(${LVGLPP_DIR}/src/)
+zephyr_include_directories(include)
 zephyr_compile_options("-Wno-unused-function")
 
 zephyr_library_sources(
+    lvgl_zinput.cpp
     ${LVGLPP_DIR}/src/lvglpp/font/font.cpp
 
     ${LVGLPP_DIR}/src/lvglpp/core/event.cpp
