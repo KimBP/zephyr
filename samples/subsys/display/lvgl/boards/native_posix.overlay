@@ -69,6 +69,7 @@
 	};
 
 	lvgl_keypad_input {
+		status = "ok";
 		compatible = "zephyr,lvgl-keypad-input";
 		input = <&keys>;
 		input-codes = <INPUT_KEY_LEFT INPUT_KEY_RIGHT INPUT_KEY_ENTER>;
