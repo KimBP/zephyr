@@ -243,11 +243,6 @@ zephyr_library_sources(
     ${LVGL_DIR}/src/libs/barcode/lv_barcode.c
     ${LVGL_DIR}/src/libs/bin_decoder/lv_bin_decoder.c
     ${LVGL_DIR}/src/libs/bmp/lv_bmp.c
-    ${LVGL_DIR}/src/libs/expat/xmlparse.c
-    ${LVGL_DIR}/src/libs/expat/xmlrole.c
-    ${LVGL_DIR}/src/libs/expat/xmltok.c
-    ${LVGL_DIR}/src/libs/expat/xmltok_impl.c
-    ${LVGL_DIR}/src/libs/expat/xmltok_ns.c
     ${LVGL_DIR}/src/libs/ffmpeg/lv_ffmpeg.c
     ${LVGL_DIR}/src/libs/freetype/lv_freetype.c
     ${LVGL_DIR}/src/libs/freetype/lv_freetype_glyph.c
@@ -262,8 +257,7 @@ zephyr_library_sources(
     ${LVGL_DIR}/src/libs/fsdrv/lv_fs_stdio.c
     ${LVGL_DIR}/src/libs/fsdrv/lv_fs_uefi.c
     ${LVGL_DIR}/src/libs/fsdrv/lv_fs_win32.c
-    ${LVGL_DIR}/src/libs/gif/AnimatedGIF/src/gif.c
-    ${LVGL_DIR}/src/libs/gif/lv_gif.c
+    ${LVGL_DIR}/src/libs/gif/gif.c
     ${LVGL_DIR}/src/libs/libjpeg_turbo/lv_libjpeg_turbo.c
     ${LVGL_DIR}/src/libs/libpng/lv_libpng.c
     ${LVGL_DIR}/src/libs/lodepng/lodepng.c
@@ -334,42 +328,6 @@ zephyr_library_sources(
     ${LVGL_DIR}/src/others/fragment/lv_fragment.c
     ${LVGL_DIR}/src/others/fragment/lv_fragment_manager.c
     ${LVGL_DIR}/src/others/translation/lv_translation.c
-    ${LVGL_DIR}/src/xml/lv_xml_translation.c
-    ${LVGL_DIR}/src/xml/lv_xml_widget.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_spangroup_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_dropdown_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_scale_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_arc_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_tabview_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_slider_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_chart_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_buttonmatrix_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_canvas_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_checkbox_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_calendar_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_switch_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_bar_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_button_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_label_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_keyboard_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_obj_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_qrcode_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_textarea_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_image_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_imagebutton_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_roller_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_spinbox_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_spinner_parser.c
-    ${LVGL_DIR}/src/xml/parsers/lv_xml_table_parser.c
-    ${LVGL_DIR}/src/xml/lv_xml_parser.c
-    ${LVGL_DIR}/src/xml/lv_xml_component.c
-    ${LVGL_DIR}/src/xml/lv_xml_base_types.c
-    ${LVGL_DIR}/src/xml/lv_xml_load.c
-    ${LVGL_DIR}/src/xml/lv_xml_style.c
-    ${LVGL_DIR}/src/xml/lv_xml_test.c
-    ${LVGL_DIR}/src/xml/lv_xml_utils.c
-    ${LVGL_DIR}/src/xml/lv_xml.c
-    ${LVGL_DIR}/src/xml/lv_xml_update.c
 
     ${LVGL_DIR}/src/stdlib/builtin/lv_tlsf.c
     ${LVGL_DIR}/src/stdlib/clib/lv_string_clib.c
