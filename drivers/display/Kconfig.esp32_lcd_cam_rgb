@@ -1,0 +1,13 @@
+# Copyright (c) 2026 Kim Bondergaard
+# SPDX-License-Identifier: Apache-2.0
+
+config DISPLAY_ESP32_LCD_CAM_RGB
+	bool "ESP32 LCD_CAM RGB scanout backend"
+	default y
+	select DISPLAY_RGB_SCANOUT
+	depends on SOC_SERIES_ESP32S3
+	depends on DT_HAS_ESPRESSIF_ESP32_LCD_CAM_RGB_ENABLED
+	help
+	  Enable RGB scanout backend for ESP32-S3 LCD_CAM.
+	  This backend is used by RGB panel drivers through the generic
+	  display RGB scanout interface.

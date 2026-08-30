@@ -28,6 +28,12 @@ config DISPLAY_COLOR_PALETTE_MAX_SIZE
 	help
 	  Maximum size of color palette in display drivers.
 
+config DISPLAY_RGB_SCANOUT
+	bool
+	help
+	  Internal gate for the generic RGB scanout dispatch layer used by
+	  scanout backend display drivers.
+
 source "drivers/display/Kconfig.color_dither"
 
 module = DISPLAY
@@ -40,6 +46,7 @@ source "drivers/display/Kconfig.charlieplex_led_matrix"
 source "drivers/display/Kconfig.co5300"
 source "drivers/display/Kconfig.dummy"
 source "drivers/display/Kconfig.ed2208_gca"
+source "drivers/display/Kconfig.esp32_lcd_cam_rgb"
 source "drivers/display/Kconfig.gc9x01x"
 source "drivers/display/Kconfig.hub12"
 source "drivers/display/Kconfig.hx8353e"
