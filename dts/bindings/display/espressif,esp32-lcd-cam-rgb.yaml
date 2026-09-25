@@ -1,0 +1,84 @@
+# Copyright (c) 2026 Kim Bøndergaard <kim@fam-boendergaard.dk>
+# SPDX-License-Identifier: Apache-2.0
+
+description: ESP32 LCD_CAM RGB scanout host configuration
+
+compatible: "espressif,esp32-lcd-cam-rgb"
+
+include: base.yaml
+
+properties:
+  width:
+    type: int
+    required: true
+    description: Active horizontal resolution in pixels.
+
+  height:
+    type: int
+    required: true
+    description: Active vertical resolution in lines.
+
+  data-bus-width:
+    type: int
+    required: true
+    enum: [16, 18, 24]
+    description: Parallel RGB data bus width.
+
+  clock-frequency:
+    type: int
+    required: true
+    description: Pixel clock for RGB scanout in Hz.
+
+  hsync-len:
+    type: int
+    required: true
+    description: Horizontal sync pulse width in pixel clocks.
+
+  hback-porch:
+    type: int
+    required: true
+    description: Horizontal back porch in pixel clocks.
+
+  hfront-porch:
+    type: int
+    required: true
+    description: Horizontal front porch in pixel clocks.
+
+  vsync-len:
+    type: int
+    required: true
+    description: Vertical sync pulse width in lines.
+
+  vback-porch:
+    type: int
+    required: true
+    description: Vertical back porch in lines.
+
+  vfront-porch:
+    type: int
+    required: true
+    description: Vertical front porch in lines.
+
+  hsync-active:
+    type: int
+    required: true
+    enum: [0, 1]
+    description: Horizontal sync polarity; 0 low-active, 1 high-active.
+
+  vsync-active:
+    type: int
+    required: true
+    enum: [0, 1]
+    description: Vertical sync polarity; 0 low-active, 1 high-active.
+
+  de-active:
+    type: int
+    required: true
+    enum: [0, 1]
+    description: Data-enable polarity; 0 low-active, 1 high-active.
+
+  pixelclk-active:
+    type: int
+    required: true
+    enum: [0, 1]
+    description: Pixel clock polarity; 0 drive data on falling edge, 1 on rising edge.
