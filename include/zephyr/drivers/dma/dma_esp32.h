@@ -7,6 +7,8 @@
 #ifndef ZEPHYR_INCLUDE_DRIVERS_DMA_DMA_ESP32_H_
 #define ZEPHYR_INCLUDE_DRIVERS_DMA_DMA_ESP32_H_
 
+#include <zephyr/device.h>
+
 enum gdma_trigger_peripheral {
 	ESP_GDMA_TRIG_PERIPH_M2M = -1,
 	ESP_GDMA_TRIG_PERIPH_SPI2 = 0,
@@ -35,5 +37,18 @@ enum gdma_trigger_peripheral {
 		    (DT_INST_DMAS_CELL_BY_NAME(n, name, cell)),	\
 		    (0xff))
 
+/* Restart an already looped channel.
+ * The skip-bytes is the number of bytes already consumed by the dma's 
+ * 'restart' of the ring. I.e. to keep ring synchronized those bytes shouldn't
+ * be reread
+ */
+int dma_esp32_gdma_config_restart(const struct device *dev, uint32_t channel,
+				  size_t skip_bytes);
+
+/*
+ * Re-launch a cyclic TX ring whose restart node was prepared by
+ * dma_esp32_gdma_config_restart().
+ */
+int dma_esp32_gdma_restart_channel(const struct device *dev, uint32_t channel);
 
 #endif /* ZEPHYR_INCLUDE_DRIVERS_DMA_DMA_ESP32_H_ */
