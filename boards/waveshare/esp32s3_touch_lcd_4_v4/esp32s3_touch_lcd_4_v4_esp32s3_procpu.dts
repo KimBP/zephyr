@@ -36,6 +36,12 @@
 		zephyr,touch = &gt911;
 	};
 
+	lvgl_pointer {
+		compatible = "zephyr,lvgl-pointer-input";
+		input = <&gt911>;
+		status = "okay";
+	};
+
 	buttons {
 		compatible = "gpio-keys";
 
@@ -238,5 +244,13 @@
 };
 
 &esp32_bt_hci {
+	status = "okay";
+};
+
+/* TO GO TO PROJECT SPECIFIC OVERLAY */
+
+&twai {
+	pinctrl-0 = <&twai_default>;
+	pinctrl-names = "default";
 	status = "okay";
 };
