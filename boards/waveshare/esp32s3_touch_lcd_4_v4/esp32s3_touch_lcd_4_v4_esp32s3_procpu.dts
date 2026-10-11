@@ -34,6 +34,7 @@
 		zephyr,display = &lcd_cam_rgb;
 		zephyr,bt-hci = &esp32_bt_hci;
 		zephyr,touch = &gt911;
+		backlight-pwm = &backlight_led;
 	};
 
 	lvgl_pointer {
