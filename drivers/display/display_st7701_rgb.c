@@ -356,7 +356,7 @@ static DEVICE_API(display, st7701_rgb_api) = {
 };
 
 #define ST7701_RGB_DBI_CFG(inst)                                                                   \
-	MIPI_DBI_CONFIG_DT(DT_DRV_INST(inst), SPI_OP_MODE_CONTROLLER | SPI_WORD_SET(9), 0)
+	MIPI_DBI_CONFIG_DT(DT_DRV_INST(inst), SPI_OP_MODE_MASTER | SPI_WORD_SET(9), 0)
 
 #define ST7701_RGB_INST_DEFINE(inst)                                                               \
 	static const struct st7701_rgb_config st7701_rgb_cfg_##inst = {                            \
