@@ -122,9 +122,10 @@ struct dma_esp32_channel {
 	uint8_t dir;
 	uint8_t channel_id;
 	int periph_id;
-	/* The peripheral a memory-to-memory pair selects, but does not use */
 	bool cyclic;
 	dma_callback_t cb;
+	void *user_data;
+	esp_dma_desc_t desc_list[CONFIG_DMA_ESP32_MAX_DESCRIPTOR_NUM];
 	esp_dma_desc_t restart_desc;
 #if CONFIG_PM
 	bool m2m_transfer;
