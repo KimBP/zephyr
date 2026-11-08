@@ -141,11 +141,15 @@ static int gt911_process(const struct device *dev)
 	}
 
 	/*
-	 * Note- since we program the max number of touch inputs during init,
-	 * the controller won't report more than the maximum number of touch
-	 * points we are configured to support
+	 * The max number of touch inputs is programmed during init, but the
+	 * reported count can still exceed it (noise, glitched status reads).
 	 */
 	points = status & GT911_TOUCH_POINTS_MSK;
+	if (points > CONFIG_INPUT_GT911_MAX_TOUCH_POINTS) {
+		LOG_DBG("Clamping reported touch points %u to %u", points,
+			CONFIG_INPUT_GT911_MAX_TOUCH_POINTS);
+		points = CONFIG_INPUT_GT911_MAX_TOUCH_POINTS;
+	}
 
 	/* need to clear the status */
 	uint8_t clear_buffer[3] = {(uint8_t)GT911_REG_STATUS, (uint8_t)(GT911_REG_STATUS >> 8), 0};
