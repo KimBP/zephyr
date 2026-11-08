@@ -24,6 +24,7 @@
 #include <hal/lcd_ll.h>
 #include <hal/lcd_hal.h>
 #include <hal/gdma_ll.h>
+#include <hal/cache_ll.h>
 #include <hal/dma_types.h>
 #include <esp_clk_tree.h>
 #include <esp_rom_sys.h>
@@ -110,12 +111,24 @@ static int esp32_lcd_cam_rgb_bytes_per_pixel(const struct esp32_lcd_cam_rgb_timi
 	return -EINVAL;
 }
 
+/* Start an asynchronous data cache preload of the frame buffer chunk the next DMA done ISR will
+ * copy, so that memcpy hits the cache instead of stalling on PSRAM. The frame buffer is always in
+ * external RAM (.ext_ram.bss). Calls the ROM preload directly; it's always_inline and IRAM safe.
+ */
+static ALWAYS_INLINE void esp32_lcd_cam_rgb_preload_next(struct esp32_lcd_cam_rgb_ctx *ctx)
+{
+	cache_ll_l1_dcache_preload(CACHE_LL_ID_ALL,
+				   (uint32_t)(uintptr_t)(ctx->fb + ctx->next_fill * ctx->chunk_size),
+				   ctx->chunk_size, CACHE_PRELOAD_ORDER_ASCENDING);
+}
+
 static void IRAM_ATTR esp32_lcd_cam_rgb_prefill(struct esp32_lcd_cam_rgb_ctx *ctx)
 {
 	memcpy(ctx->bb, ctx->fb, ctx->bb_count * ctx->chunk_size);
 	ctx->fill_buf = 0U;
 	ctx->next_fill = ctx->bb_count % ctx->chunk_count;
 	ctx->done_count = 0U;
+	esp32_lcd_cam_rgb_preload_next(ctx);
 }
 
 static void IRAM_ATTR esp32_lcd_cam_rgb_dma_done(const struct device *dma_dev, void *user_data,
@@ -137,6 +150,7 @@ static void IRAM_ATTR esp32_lcd_cam_rgb_dma_done(const struct device *dma_dev, v
 	ctx->fill_buf = (ctx->fill_buf + 1U) % ctx->bb_count;
 	ctx->next_fill = (ctx->next_fill + 1U) % ctx->chunk_count;
 	ctx->done_count++;
+	esp32_lcd_cam_rgb_preload_next(ctx);
 }
 
 static void IRAM_ATTR esp32_lcd_cam_rgb_vsync_isr(void *arg)
