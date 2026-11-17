@@ -24,7 +24,7 @@ class tNMEA2000_zephyr : public tNMEA2000
 protected:
   bool CANSendFrame(unsigned long id, unsigned char len, 
 		    const unsigned char *buf, bool wait_sent=true) override;
-  bool CANOpen() override { return true; } // Done using normal zephyr device functions
+  bool CANOpen() override;
   bool CANGetFrame(unsigned long &id, unsigned char &len, unsigned char *buf) override;
   void InitCANFrameBuffers() override;
 
@@ -61,5 +61,8 @@ private:
   const static uint8_t maxRecvMsg{10};
   std::array<char, maxRecvMsg*sizeof(struct can_frame)> recvBuffer;
   struct k_msgq recvMsgQueue;
+
+  bool canStarted{false};
+  int rxFilterId{-1};
 };
 
