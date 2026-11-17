@@ -78,50 +78,65 @@ void tNMEA2000_zephyr::InitCANFrameBuffers()
   MaxCANSendFrames = framePoolSize;
 }
 
-tNMEA2000_zephyr::tNMEA2000_zephyr() 
-: th(cpputil::thread(std::bind(&tNMEA2000_zephyr::runner, this)))
-, dev(DEVICE_DT_GET(DT_CHOSEN(zephyr_canbus)))
+tNMEA2000_zephyr::tNMEA2000_zephyr()
+: dev(DEVICE_DT_GET(DT_CHOSEN(zephyr_canbus)))
 {
+  for(auto& frame : framePool) {
+    idleQueue.enqueue(&frame);
+  }
 
-  th.setName("NMEA2000 wrapper");
+  k_msgq_init(&recvMsgQueue, recvBuffer.data(), sizeof(struct can_frame), maxRecvMsg);
+}
+
+bool tNMEA2000_zephyr::CANOpen()
+{
+  if (canStarted) {
+    return true;
+  }
 
   if (!device_is_ready(dev)) {
-    printk("CAN device not ready");
-    return;
+    LOG_ERR("CAN device not ready");
+    return false;
   }
-  
+
+  if (rxFilterId < 0) {
+    // Setup filter receiving any packet.
+    const struct can_filter recvAllFilter = {
+      .id = 0,
+      .mask = 0,
+      .flags = CAN_FRAME_IDE,
+    };
+
+    rxFilterId = can_add_rx_filter_msgq(dev, &recvMsgQueue, &recvAllFilter);
+    if (rxFilterId < 0) {
+      LOG_ERR("Failed adding rx filter (err %d)", rxFilterId);
+      return false;
+    }
+  }
+
   can_set_bitrate(dev, canBitRate);
   can_set_mode(dev, CAN_MODE_ONE_SHOT);
 
   int err = can_start(dev);
   if (err != 0) {
     LOG_ERR("Error starting CAN controller (err %d)", err);
-    return;
+    return false;
   }
+  canStarted = true;
 
-  for(auto& frame : framePool) {
-    idleQueue.enqueue(&frame);
-  }
+  // Start the thread as the last step - everything it uses is initialised now
+  th = cpputil::thread(std::bind(&tNMEA2000_zephyr::runner, this));
+  th.setName("NMEA2000 wrapper");
 
-  // Setup filter receiving any packet. 
-  const struct can_filter recvAllFilter = {
-    .id = 0,
-    .mask = 0,
-    .flags = CAN_FRAME_IDE,
-  };
-
-  k_msgq_init(&recvMsgQueue, recvBuffer.data(), sizeof(struct can_frame), maxRecvMsg);
-  err = can_add_rx_filter_msgq(dev, &recvMsgQueue, &recvAllFilter);
-  if (err == -ENOSPC)
-  {
-    LOG_WRN("No Input filter slots available");
-  }
+  return true;
 }
 
 tNMEA2000_zephyr::~tNMEA2000_zephyr()
 {
   threadStop = true;
-  th.join();
+  if (th.joinable()) {
+    th.join();
+  }
 }
 
 void tNMEA2000_zephyr::runner() 
