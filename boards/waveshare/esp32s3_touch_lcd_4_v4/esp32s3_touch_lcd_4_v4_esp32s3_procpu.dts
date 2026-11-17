@@ -244,3 +244,9 @@
 &esp32_bt_hci {
 	status = "okay";
 };
+
+&twai {
+	status = "okay";
+	pinctrl-0 = <&twai_default>;
+	pinctrl-names = "default";
+};
