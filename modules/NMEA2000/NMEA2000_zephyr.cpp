@@ -12,12 +12,12 @@ LOG_MODULE_REGISTER(Z_NMEA, CONFIG_APP_BMS_LOG_LEVEL);
 bool tNMEA2000_zephyr::CANSendFrame(unsigned long id, unsigned char len, 
       const unsigned char *buf, bool wait_sent)
 {
-  if (idleQueue.empty()) {
+  struct can_frame *frame;
+
+  if (!idleQueue.try_dequeue(frame)) {
     LOG_WRN("No frames available for for transmit");
     return false;
   }
-
-  auto frame = idleQueue.dequeue();
 
   frame->id = id;
   frame->dlc = (len > 8 ? 8 : len);
@@ -39,10 +39,7 @@ bool tNMEA2000_zephyr::canSend()
 
   auto frame = sendQueue.dequeue();
 
-  int err;
-  do {
-    err = can_send(dev, frame, K_MSEC(2), sendCbHandler, this);
-  } while (err == -EAGAIN);
+  int err = can_send(dev, frame, K_MSEC(sendTimeoutMs), sendCbHandler, this);
 
   idleQueue.enqueue(frame);
 
@@ -114,10 +111,19 @@ bool tNMEA2000_zephyr::CANOpen()
     }
   }
 
-  can_set_bitrate(dev, canBitRate);
-  can_set_mode(dev, CAN_MODE_ONE_SHOT);
+  int err = can_set_bitrate(dev, canBitRate);
+  if (err != 0) {
+    LOG_ERR("Error setting CAN bitrate %u (err %d)", (unsigned int)canBitRate, err);
+    return false;
+  }
 
-  int err = can_start(dev);
+  err = can_set_mode(dev, CAN_MODE_NORMAL);
+  if (err != 0) {
+    LOG_ERR("Error setting CAN mode (err %d)", err);
+    return false;
+  }
+
+  err = can_start(dev);
   if (err != 0) {
     LOG_ERR("Error starting CAN controller (err %d)", err);
     return false;
@@ -159,6 +165,10 @@ void tNMEA2000_zephyr::sendCbHandler(const struct device *dev, int error, void *
   if (not user_data) {
     LOG_ERR("user_data expected");
     return;
+  }
+
+  if (error != 0) {
+    LOG_WRN("Frame transmit failed (err %d)", error);
   }
 
   auto inst = static_cast<tNMEA2000_zephyr*>(user_data);
