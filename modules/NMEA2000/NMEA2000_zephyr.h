@@ -44,6 +44,7 @@ private:
 
 private:
   uint32_t canBitRate{ KHZ(250) };
+  static constexpr int sendTimeoutMs{10};
 
   /* can_tx_callback_t - runs in ISR context */
   static void sendCbHandler(const struct device *dev, int error, void *user_data);
