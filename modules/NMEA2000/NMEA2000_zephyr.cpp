@@ -130,14 +130,26 @@ bool tNMEA2000_zephyr::CANOpen()
   }
   canStarted = true;
 
-  // Start the thread as the last step - everything it uses is initialised now
-  th = cpputil::thread(std::bind(&tNMEA2000_zephyr::runner, this));
-  th.setName("NMEA2000 wrapper");
-
   return true;
 }
 
 tNMEA2000_zephyr::~tNMEA2000_zephyr()
+{
+  Stop();
+}
+
+void tNMEA2000_zephyr::Start()
+{
+  if (th.joinable()) {
+    return;
+  }
+
+  threadStop = false;
+  th = cpputil::thread(std::bind(&tNMEA2000_zephyr::runner, this));
+  th.setName("NMEA2000 wrapper");
+}
+
+void tNMEA2000_zephyr::Stop()
 {
   threadStop = true;
   if (th.joinable()) {
@@ -156,6 +168,11 @@ void tNMEA2000_zephyr::runner()
     }
 
     ParseMessages(); // This processes incoming messages
+
+    if (periodicHook) {
+      periodicHook();
+    }
+
     k_sleep(K_MSEC(10));
   }
 }
