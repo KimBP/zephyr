@@ -17,6 +17,8 @@
 #include <zephyr/devicetree.h>
 
 #include <array>
+#include <atomic>
+#include <functional>
 
 class tNMEA2000_zephyr : public tNMEA2000
 {
@@ -39,8 +41,9 @@ protected:
 private:
   cpputil::thread th;
   void runner();
-  bool threadStop{false};
+  std::atomic<bool> threadStop{false};
   cpputil::binary_semaphore sendSem;
+  std::function<void()> periodicHook;
 
 private:
   uint32_t canBitRate{ KHZ(250) };
@@ -55,6 +58,21 @@ private:
 public:
   tNMEA2000_zephyr();
   ~tNMEA2000_zephyr();
+
+  /*
+   * The runner thread started by Start() is the only thread allowed to call
+   * the tNMEA2000 API afterwards. Configure the library and set the hook
+   * before calling Start().
+   */
+
+  /* Called from the runner thread on every loop iteration */
+  void SetPeriodicHook(std::function<void()> hook) { periodicHook = std::move(hook); }
+
+  /* Start the runner thread. It opens the library and keeps it running */
+  void Start();
+
+  /* Stop and join the runner thread */
+  void Stop();
 
 private:
   const struct device *dev;
