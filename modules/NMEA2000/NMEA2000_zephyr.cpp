@@ -136,6 +136,19 @@ bool tNMEA2000_zephyr::CANOpen()
 tNMEA2000_zephyr::~tNMEA2000_zephyr()
 {
   Stop();
+
+  if (canStarted) {
+    int err = can_stop(dev);
+    if (err != 0) {
+      LOG_ERR("Error stopping CAN controller (err %d)", err);
+    }
+    canStarted = false;
+  }
+
+  if (rxFilterId >= 0) {
+    can_remove_rx_filter(dev, rxFilterId);
+    rxFilterId = -1;
+  }
 }
 
 void tNMEA2000_zephyr::Start()
