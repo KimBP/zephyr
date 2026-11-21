@@ -9,7 +9,6 @@
 
 #include <Queue/SafeQueue.h>
 
-#include <cpputil/semaphore.h>
 #include <cpputil/mutex.h>
 #include <cpputil/thread.h>
 
@@ -42,7 +41,6 @@ private:
   cpputil::thread th;
   void runner();
   std::atomic<bool> threadStop{false};
-  cpputil::binary_semaphore sendSem;
   std::function<void()> periodicHook;
 
 private:
@@ -77,9 +75,14 @@ public:
 private:
   const struct device *dev;
 
-  const static uint8_t maxRecvMsg{10};
-  std::array<char, maxRecvMsg*sizeof(struct can_frame)> recvBuffer;
+  static constexpr uint8_t maxRecvMsg{64};
+  static constexpr int recvWaitMs{10};
+  alignas(struct can_frame) std::array<char, maxRecvMsg*sizeof(struct can_frame)> recvBuffer;
   struct k_msgq recvMsgQueue;
+
+  // Frame taken from recvMsgQueue while waiting for data, returned first by CANGetFrame()
+  struct can_frame pendingFrame;
+  bool hasPendingFrame{false};
 
   bool canStarted{false};
   int rxFilterId{-1};

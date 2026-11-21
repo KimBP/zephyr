@@ -26,8 +26,6 @@ bool tNMEA2000_zephyr::CANSendFrame(unsigned long id, unsigned char len,
 
   sendQueue.enqueue(frame);
 
-  sendSem.release();
-
   return true;
 }
 
@@ -57,7 +55,10 @@ bool tNMEA2000_zephyr::CANGetFrame(unsigned long &id, unsigned char &len, unsign
 {
   struct can_frame frame;
 
-  if (0 != k_msgq_get(&recvMsgQueue, &frame, K_NO_WAIT)) {
+  if (hasPendingFrame) {
+    frame = pendingFrame;
+    hasPendingFrame = false;
+  } else if (0 != k_msgq_get(&recvMsgQueue, &frame, K_NO_WAIT)) {
     return false;
   }
 
@@ -65,7 +66,7 @@ bool tNMEA2000_zephyr::CANGetFrame(unsigned long &id, unsigned char &len, unsign
   len = frame.dlc;
   memcpy(buf, frame.data, len);
 
-  LOG_INF("A frame received");
+  LOG_DBG("Frame received, id 0x%08x", (unsigned int)frame.id);
   return true;
 }
 
@@ -174,11 +175,6 @@ void tNMEA2000_zephyr::runner()
 {
   while (!threadStop) {
 
-    if (sendSem.try_acquire()) {
-      while (not sendQueue.empty()) {
-        canSend();
-      }
-    }
 
     ParseMessages(); // This processes incoming messages
 
@@ -186,22 +182,25 @@ void tNMEA2000_zephyr::runner()
       periodicHook();
     }
 
-    k_sleep(K_MSEC(10));
+    // Everything queued by ParseMessages() and the hook goes out now
+    while (not sendQueue.empty()) {
+      canSend();
+    }
+
+    // Sleep until a frame arrives, or the timeout lets library timers run
+    if (!hasPendingFrame &&
+        k_msgq_get(&recvMsgQueue, &pendingFrame, K_MSEC(recvWaitMs)) == 0) {
+      hasPendingFrame = true;
+    }
   }
 }
 
 void tNMEA2000_zephyr::sendCbHandler(const struct device *dev, int error, void *user_data)
 {
-  if (not user_data) {
-    LOG_ERR("user_data expected");
-    return;
-  }
+  ARG_UNUSED(dev);
+  ARG_UNUSED(user_data);
 
   if (error != 0) {
     LOG_WRN("Frame transmit failed (err %d)", error);
   }
-
-  auto inst = static_cast<tNMEA2000_zephyr*>(user_data);
-
-  inst->sendSem.release();
 }
