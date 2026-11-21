@@ -20,6 +20,8 @@ zephyr_library_sources(
     ${NMEA2000_DIR}/src/N2kGroupFunctionDefaultHandlers.cpp
     ${NMEA2000_DIR}/src/N2kMsg.cpp
     ${NMEA2000_DIR}/src/N2kMessages.cpp
+    ${NMEA2000_DIR}/src/N2kRaymarine.cpp
+    ${NMEA2000_DIR}/src/N2kGarmin.cpp
     ${NMEA2000_DIR}/src/N2kStream.cpp
     ${NMEA2000_DIR}/src/N2kTimer.cpp
     ${NMEA2000_DIR}/src/NMEA2000.cpp
