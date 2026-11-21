@@ -175,6 +175,7 @@ void tNMEA2000_zephyr::runner()
 {
   while (!threadStop) {
 
+    checkRecvQueueFull();
 
     ParseMessages(); // This processes incoming messages
 
@@ -192,6 +193,22 @@ void tNMEA2000_zephyr::runner()
         k_msgq_get(&recvMsgQueue, &pendingFrame, K_MSEC(recvWaitMs)) == 0) {
       hasPendingFrame = true;
     }
+  }
+}
+
+void tNMEA2000_zephyr::checkRecvQueueFull()
+{
+  // The driver drops frames silently when the queue is full. A full queue
+  // doesn't prove a drop, so this is only a hint.
+  if (k_msgq_num_free_get(&recvMsgQueue) != 0) {
+    return;
+  }
+
+  int64_t now = k_uptime_get();
+  if (now - lastRecvFullWarnMs >= recvFullWarnIntervalMs) {
+    lastRecvFullWarnMs = now;
+    LOG_WRN("Rx queue full (%u frames) - frames may have been dropped",
+            (unsigned int)maxRecvMsg);
   }
 }
 

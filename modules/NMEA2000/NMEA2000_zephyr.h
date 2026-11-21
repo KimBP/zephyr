@@ -84,6 +84,12 @@ private:
   struct can_frame pendingFrame;
   bool hasPendingFrame{false};
 
+  // Rate limit for the rx queue full warning
+  static constexpr int64_t recvFullWarnIntervalMs{10000};
+  int64_t lastRecvFullWarnMs{-recvFullWarnIntervalMs};
+
+  void checkRecvQueueFull();
+
   bool canStarted{false};
   int rxFilterId{-1};
 };
